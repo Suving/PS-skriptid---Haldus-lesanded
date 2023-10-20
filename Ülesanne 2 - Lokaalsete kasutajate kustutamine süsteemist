@@ -1,0 +1,19 @@
+# Skripti algus
+
+# Küsime kasutajalt ees- ja perenime
+$firstName = Read-Host "Sisesta kasutaja eesnimi (ladina sümbolites)"
+$lastName = Read-Host "Sisesta kasutaja perenimi (ladina sümbolites)"
+
+# Loome kasutajanime, teisendades täisnime punktiga eraldatud väiketähtedeks
+$username = ($firstName + "." + $lastName).ToLower()
+
+# Proovime kustutada kasutaja lokaalsete kasutajate hulgast
+try {
+    Remove-LocalUser -Name $username -ErrorAction Stop
+    Write-Host "Kasutaja '$username' on edukalt kustutatud."
+}
+catch {
+    Write-Host "Kasutaja kustutamine ebaõnnestus. Viga: $_" -ForegroundColor Red
+}
+
+# Skripti l6pp
