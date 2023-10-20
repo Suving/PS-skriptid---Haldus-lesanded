@@ -1,0 +1,22 @@
+# Küsime kasutajalt ees- ja perenime
+$firstName = Read-Host "Sisesta kasutaja eesnimi (ladina sümbolites)"
+$lastName = Read-Host "Sisesta kasutaja perenimi (ladina sümbolites)"
+
+# Loome kasutajanime, teisendades täisnime punktiga eraldatud väiketähtedeks
+$username = ($firstName + "." + $lastName).ToLower()
+
+# Kontrollime, kas kasutaja eksisteerib AD-s
+$existingUser = Get-ADUser -Filter {SamAccountName -eq $username}
+
+if ($existingUser) {
+    Write-Host "Kasutaja '$username' on juba olemas Active Directory's."
+} else {
+    # Proovime lisada kasutaja AD-sse
+    try {
+        New-ADUser -Name "$firstName $lastName" -SamAccountName $username -UserPrincipalName "$username@domain.local" -Description "Kasutaja: $firstName $lastName" -AccountPassword (ConvertTo-SecureString "Parool1!" -AsPlainText -Force)
+        Write-Host "Kasutaja '$username' on edukalt lisatud Active Directory'sse."
+    }
+    catch {
+        Write-Host "Kasutaja lisamine ebaõnnestus. Viga: $_" -ForegroundColor Red
+    }
+}
