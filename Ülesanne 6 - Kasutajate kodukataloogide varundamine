@@ -1,0 +1,25 @@
+# Skripti algus
+
+# Defineerib varunduse kausta
+$backupFolder = "C:\Backup"
+
+# Kontrollib, kas varunduste kaust eksisteerib, kui mitte, siis loome selle
+if (-not (Test-Path -Path $backupFolder -PathType Container)) {
+    New-Item -Path $backupFolder -ItemType Directory
+}
+
+# Loob varundused kõikide kasutajate kodukaustadest
+$users = Get-ChildItem "C:\Users" -Directory
+foreach ($user in $users) {
+    $username = $user.Name
+    $date = Get-Date -Format "dd.MM.yyyy"
+    $backupFileName = "$username-$date.zip"
+    $backupPath = Join-Path -Path $backupFolder -ChildPath $backupFileName
+
+    # Loob varunduse kasutaja kodukaustast
+    Compress-Archive -Path $user.FullName -DestinationPath $backupPath -Force
+}
+
+Write-Host "Kõik kasutajate kodukaustad on varundatud asukohta $backupFolder."
+
+# Skripti l6pp
