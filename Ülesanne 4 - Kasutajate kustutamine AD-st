@@ -1,0 +1,34 @@
+# Skripti algus
+
+# Funktsioon sümbolite transleerimiseks
+function Transliterate-String {
+    param (
+        [string]$input
+    )
+
+    $transliterated = $input.Normalize([System.Text.NormalizationForm]::FormD)
+    $transliterated = $transliterated -creplace '\p{Mn}', ''
+    $transliterated
+}
+
+# Küsib kasutajalt ees- ja perenime
+$firstName = Read-Host "Sisesta kasutaja eesnimi (ladina sümbolites)"
+$lastName = Read-Host "Sisesta kasutaja perenimi (ladina sümbolites)"
+
+# Teisendab ees- ja perenime ASCII sümboliteks
+$transliteratedFirstName = Transliterate-String -input $firstName
+$transliteratedLastName = Transliterate-String -input $lastName
+
+# Loob kasutajanimi, teisendades täisnime punktiga eraldatud väiketähtedeks
+$username = ($transliteratedFirstName + "." + $transliteratedLastName).ToLower()
+
+# Proovib kustutada kasutaja AD-st
+try {
+    Remove-ADUser -Identity $username -Confirm:$false -ErrorAction Stop
+    Write-Host "Kasutaja '$username' on edukalt kustutatud Active Directory's."
+}
+catch {
+    Write-Host "Kasutaja kustutamine ebaõnnestus. Viga: $_" -ForegroundColor Red
+}
+
+# Skripti l6pp
