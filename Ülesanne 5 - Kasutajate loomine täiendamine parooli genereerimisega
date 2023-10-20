@@ -1,0 +1,32 @@
+# Skripti algus
+
+# Funktsioon parooli genereerimiseks
+function Generate-Password {
+    param (
+        [int]$length = 10
+    )
+    $charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+=-"
+    $password = -join ((Get-Random -Count $length -InputObject $charset.ToCharArray()) | Get-Random -Count $length)
+    $password
+}
+
+# Küsib kasutajalt ees- ja perenime
+$firstName = Read-Host "Sisesta kasutaja eesnimi (ladina sümbolites)"
+$lastName = Read-Host "Sisesta kasutaja perenimi (ladina sümbolites)"
+
+# Loob kasutajanimi, teisendades täisnime punktiga eraldatud väiketähtedeks
+$username = ($firstName + "." + $lastName).ToLower()
+
+# Genereerime kasutajale parooli
+$password = Generate-Password
+
+# Loob kasutajale CSV-faili
+$userInfo = [PSCustomObject]@{
+    "Kasutajanimi" = $username
+    "Parool" = $password
+}
+$userInfo | Export-Csv -Path "$username.csv" -NoTypeInformation
+
+Write-Host "Kasutaja '$username' loodud. Kasutajatunnus ja parool on salvestatud '$username.csv' faili."
+
+# Skripti l6pp
