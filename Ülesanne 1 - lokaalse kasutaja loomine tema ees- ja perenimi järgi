@@ -1,0 +1,21 @@
+# Skripti algus
+
+# Küsib kasutajalt ees- ja perenime
+$firstName = Read-Host "Sisesta eesnimi (ladina sümbolites)"
+$lastName = Read-Host "Sisesta perenimi (ladina sümbolites)"
+
+# Loob kasutajanime, teisendades täisnime punktiga eraldatud väiketähtedeks
+$username = ($firstName + "." + $lastName).ToLower()
+
+# Proovib luua lokaalse kasutaja Parool1! parooliga
+$securePassword = ConvertTo-SecureString "Parool1!" -AsPlainText -Force
+
+try {
+    New-LocalUser -Name $username -Password $securePassword -Description "Kasutaja: $firstName $lastName"
+    Write-Host "Kasutaja '$username' on loodud."
+}
+catch {
+    Write-Host "Kasutaja loomine ebaõnnestus. Viga: $_" -ForegroundColor Red
+}
+
+# Skripti l6pp
